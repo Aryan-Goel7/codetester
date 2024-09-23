@@ -1,0 +1,27 @@
+{
+  "name": "codetester",
+  "module": "server.ts",
+  "type": "module",
+  "scripts": {
+    "dev:backend": "bun --watch src/server.ts",
+    "start:backend": "bun run src/server.ts",
+    "dev:frontend": "cd frontend && bun run dev",
+    "start:frontend": "cd frontend && bun run start",
+    "dev": "bun run dev:backend & bun run dev:frontend",
+    "start": "bun run start:backend & bun run start:frontend"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "^5.19.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "hono": "^4.6.1",
+    "zod": "^3.23.8",
+    "zod-prisma": "^0.5.4"
+  }
+}

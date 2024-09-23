@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "zod-prisma"
+  output   = "../src/zod" // (default) the directory where generated zod schemas will be saved
+
+  relationModel = true // (default) Create and export both plain and related models.
+  // relationModel         = "default" // Do not export model without relations.
+  // relationModel         = false // Do not generate related model
+
+  modelCase = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
+  // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+
+  modelSuffix = "Model" // (default) Suffix to apply to your prisma models when naming Zod schemas
+
+  // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
+  useDecimalJs = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
+
+  imports = null // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+
+  // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+  prismaJsonNullability = true // (default) uses prisma's scheme for JSON field nullability
+  // prismaJsonNullability = false // allows null assignment to optional JSON fields
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Problem {
+  id              Int               @id @default(autoincrement())
+  time_limit      Int               @default(2) // Default 2 sec
+  memory_limit    Int               @default(268435456) // Default 256 MB
+  description     String
+  name            String
+  sampleTestCases SampleTestCases[]
+  testCases       TestCases[]
+  submissions     Submission[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model SampleTestCases {
+  id          Int      @id @default(autoincrement())
+  input       String
+  output      String
+  explanation String?
+  Problem     Problem? @relation(fields: [problemId], references: [id])
+  problemId   Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model TestCases {
+  id        Int      @id @default(autoincrement())
+  Problem   Problem? @relation(fields: [problemId], references: [id])
+  problemId Int?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+}
+
+model Submission {
+  id        Int      @id @default(autoincrement())
+  lang      Language
+  verdict   Verdict @default(RUNNING)
+  time_taken Int
+  memory_take Int
+  code        String
+  Problem   Problem? @relation(fields: [problemId], references: [id])
+  problemId Int?
+  createdAt DateTime   @default(now())
+}
+
+enum Language {
+  CPP
+  JAVA
+  PYTHON
+}
+
+enum Verdict {
+  RUNNING
+  ACCEPTED
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+  WRONG_ANSWER
+  RUN_TIME_ERROR
+  COMPILE_TIME_ERROR
+}
